@@ -2,7 +2,7 @@
   <el-dialog :title="title" :visible="visible" @update:visible="handleVisibleChange" width="50%" center>
     <el-form ref="EditForm" :model="form" label-width="100px" style="width: 100%">
       <el-form-item label="会议时间">
-        <el-input v-model="form.date"></el-input>
+        <el-input v-model="form.date_meeting"></el-input>
       </el-form-item>
       <el-form-item label="会议主题">
         <el-input v-model="form.title"></el-input>
@@ -10,12 +10,12 @@
       <el-form-item label="会议地点">
         <el-input v-model="form.place"></el-input>
       </el-form-item>
-      <el-form-item label="最晚提交时间">
+      <!-- <el-form-item label="最晚提交时间">
         <el-input v-model="form.deadline"></el-input>
       </el-form-item>
       <el-form-item label="提交状况">
         <el-input v-model="form.submissions"></el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleVisibleChange(false)">取 消</el-button>

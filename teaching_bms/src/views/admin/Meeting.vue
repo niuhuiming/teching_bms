@@ -10,11 +10,11 @@
     </div>
 
     <el-table :data="meetingTable" style="width: 100%">
-      <el-table-column width="200" prop="date" label="会议时间"  sortable></el-table-column>
+      <el-table-column width="300" prop="date_meeting" label="会议时间"  sortable></el-table-column>
       <el-table-column width="200" prop="title" label="会议主题"></el-table-column>
       <el-table-column width="200" prop="place" label="会议地点"></el-table-column>
-      <el-table-column width="200" prop="deadline" label="最晚提交时间"></el-table-column>
-      <el-table-column width="200" prop="submissions" label="提交状况"></el-table-column>
+      <!-- <el-table-column width="200" prop="deadline" label="最晚提交时间"></el-table-column>
+      <el-table-column width="200" prop="submissions" label="提交状况"></el-table-column> -->
       <el-table-column fixed="right" label="操作" width="200">
       <template slot-scope="scope">
         <el-button @click="editMeeting(scope.row)" type="text" size="small">编辑</el-button>
@@ -63,27 +63,91 @@ export default {
       this.showAddForm = false;
     },
     deleteMeeting(p) {
-      console.log('deleteMeeting', p);
+      // console.log('deleteMeeting', p);
+      this.$confirm("删会议吗, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+          axios({
+            url: "api/deleteMettingInfo",
+            method: "post",
+            data: { id: p.id_meeting },
+          }).then(() => {
+              this.$message({
+                type: "success",
+                message: "已删除",
+              });
+              // this.reload();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
     // 添加一个员工
     handleAddMeeting(meetingInfo) {
+      // console.log('handleAddMeeting', meetingInfo);
       // do something
-      console.log('handleAddMeeting', meetingInfo);
+      axios({
+        url: "api/addMettingInfo",
+        method: "post",
+        data: meetingInfo,
+      }).then((res) => {
+          if (res.data.code) {
+            this.$message({
+              showClose: true,
+              message: "插入成功",
+              type: "success",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // 编辑一个员工
     handleEditMeeting(meetingInfo) {
       // do something
-      console.log('handleEditMeeting', meetingInfo);
+      // console.log("handleEditStaff", staffInfo);
+      axios({
+        url: "api/editMettingInfo",
+        method: "post",
+        data: meetingInfo,
+      }).then((e) => {
+          if (e.data.code) {
+            this.$message({
+              type: "success",
+              message: "已修改",
+            });
+          } else {
+            this.$message({
+              type: "error",
+              message: "修改未完成",
+            });
+          }
+          // 重新加载页面
+          // this.reload()
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     getMeetingList() {
       axios(
       {
-          url: 'api/getMeetingList',
+          url: 'api/getMettingInfo',
           method: 'get',
       }
       ).then((res) => {
-          console.log(res.data.data.meetings)
-          this.meetings=res.data.data.meetings
+          // console.log(res.data.data)
+          this.meetings=res.data.data
       }).catch((err) => {
         console.log(err);
       })
