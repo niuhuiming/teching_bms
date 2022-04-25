@@ -17,7 +17,10 @@ function filterAsyncRouterMap(asyncRouterMap, role){
         if(hasPermission(role, route)){
             // 递归判断子路由
             if(route.children && route.children.length) {
-                route.children = filterAsyncRouterMap(route.children, role)
+                let c = filterAsyncRouterMap(route.children, role)
+                if (c.length) {
+                    route.children = c;
+                } else return false;
             }
             return true
         }
@@ -44,10 +47,8 @@ const permission = {
         GenerateRoutes ({commit}, role) {
             return new Promise(resolve => {
                 let accessedRouters
-                if(role === 'admin') {
-                    accessedRouters = filterAsyncRouterMap(asyncRouterMap, role)
-                    commit('SET_ROUTER', accessedRouters)
-                }
+                accessedRouters = filterAsyncRouterMap(asyncRouterMap, role)
+                commit('SET_ROUTER', accessedRouters)
                 resolve()
             })
         }

@@ -42,7 +42,8 @@ export default {
           this.$store.dispatch('LOGIN', this.formdata).then(() => {
             this.$router.push({
               path: '/home'
-            })
+            // 解决控制台报错
+            }).catch(err => {err})
           })
         }
       })

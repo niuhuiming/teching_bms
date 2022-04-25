@@ -24,7 +24,7 @@ export default {
     },
   },
   created () {
-    console.log(this.addRouters)
+    // console.log(this.addRouters)
   }
 }
 </script>
