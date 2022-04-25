@@ -23,7 +23,7 @@ export default {
     return {
       formdata: {
         username: "admin",
-        password: "123456"
+        password: "111111"
       },
       rules: {
         username: [

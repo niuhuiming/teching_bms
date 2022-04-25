@@ -32,6 +32,7 @@
 
 <script>
 import MeetingForm from './MeetingForm.vue'
+import axios from 'axios'
 export default {
   components: { MeetingForm },
   data() {
@@ -40,31 +41,7 @@ export default {
       showAddForm: false, // 是否显示新增表单
       editFormData: {},
       keyword: "",
-      meetings: [{
-          date: '2016-05-02',
-          title: '王小虎',
-          place: '上海',
-          deadline: '普陀区',
-          submissions: '上海市普陀区金沙江路 1518 弄',
-        }, {
-          date: '2016-05-04',
-          title: '王小虎',
-          place: '上海',
-          deadline: '普陀区',
-          submissions: '上海市普陀区金沙江路 1517 弄',
-        }, {
-          date: '2016-05-01',
-          title: '王小虎',
-          place: '上海',
-          deadline: '普陀区',
-          submissions: '上海市普陀区金沙江路 1519 弄',
-        }, {
-          date: '2016-05-03',
-          title: '王小虎',
-          place: '上海',
-          deadline: '普陀区',
-          submissions: '上海市普陀区金沙江路 1516 弄',
-      }],
+      meetings: [],
     };
   },
   computed: {
@@ -98,7 +75,23 @@ export default {
       // do something
       console.log('handleEditMeeting', meetingInfo);
     },
+    getMeetingList() {
+      axios(
+      {
+          url: 'api/getMeetingList',
+          method: 'get',
+      }
+      ).then((res) => {
+          console.log(res.data.data.meetings)
+          this.meetings=res.data.data.meetings
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
   },
+  mounted() {
+    this.getMeetingList();
+  }
 };
 </script>
 
