@@ -43,7 +43,7 @@ exports.login = (req, res) => {
                     // 无此人信息
                     return res.send({
                         code: 0,
-                        data: '账号或密-码错误'
+                        data: '账号或密码错误'
                     })
                 }
             })
@@ -54,17 +54,17 @@ exports.login = (req, res) => {
 // 获取用户信息
 exports.getUserInfo = (req, res) => {
     let { token } = req.headers
-    console.log('token', token);
+    // console.log('token', token);
     // 验证token
     jwt.verify(token, 'secret', (err, decoded) => {
         if (err) {
-            console.log('TOKEN ERR');
+            // console.log('TOKEN ERR');
             return res.send({
                 code: 0,
                 data: '请重新登录'
             })
         }
-        console.log('username', decoded.username);
+        // console.log('username', decoded.username);
         if (decoded.username === 'admin') {
             res.send({
                 code: 1,

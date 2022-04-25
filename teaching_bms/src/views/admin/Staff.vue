@@ -53,12 +53,22 @@ export default {
     },
   },
   methods: {
+    // 控制编辑和新增时表单的显示
+    addStaff() {
+      this.showEditForm = false;
+      this.showAddForm = true;
+    },
+    editStaff(p) {
+      this.editFormData = p;
+      this.showEditForm = true;
+      this.showAddForm = false;
+    },
+    // 获取员工列表
     getStaffInfo() {
       axios({
         url: "api/getStaffList",
         method: "get",
-      })
-        .then((res) => {
+      }).then((res) => {
           // console.log(res.data.data);
           this.staffs = res.data.data;
         })
@@ -66,34 +76,23 @@ export default {
           console.log(err);
         });
     },
-    addStaff() {
-      this.showEditForm = false;
-      this.showAddForm = true;
-    },
-    editStaff(p) {
-      // 编辑时填充表单
-      this.editFormData = p;
-      this.showEditForm = true;
-      this.showAddForm = false;
-    },
+    // 删除一个员工
     deleteStaff(p) {
       this.$confirm("要删除这个人吗, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
+      }).then(() => {
           axios({
             url: "api/deleteStaffInfo",
             method: "post",
             data: { id: p.id },
-          })
-            .then(() => {
+          }).then(() => {
               this.$message({
                 type: "success",
                 message: "已删除",
               });
-              this.reload();
+              // this.reload();
             })
             .catch((err) => {
               console.log(err);
@@ -109,14 +108,11 @@ export default {
     // 添加一个员工
     handleAddStaff(staffInfo) {
       // do something
-      console.log("handleAddStaff", staffInfo);
       axios({
         url: "api/addStaffInfo",
         method: "post",
         data: staffInfo,
-      })
-        .then((res) => {
-          console.log("-", res.data);
+      }).then((res) => {
           if (res.data.code) {
             this.$message({
               showClose: true,
@@ -137,8 +133,7 @@ export default {
         url: "api/editStaffInfo",
         method: "post",
         data: staffInfo,
-      })
-        .then(() => {
+      }).then(() => {
           this.$message({
             type: "success",
             message: "已修改",
