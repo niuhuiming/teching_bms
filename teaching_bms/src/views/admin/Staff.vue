@@ -29,7 +29,8 @@
 </template>
 
 <script>
-import StaffForm from './StaffForm.vue'
+import StaffForm from "./StaffForm.vue";
+import axios from "axios";
 export default {
   components: { StaffForm },
   data() {
@@ -37,7 +38,7 @@ export default {
       showEditForm: false, // 是否显示编辑表单
       showAddForm: false, // 是否显示新增表单
       editFormData: {},
-      keyword: "",  // 搜索时列表过滤
+      keyword: "", // 搜索时列表过滤
       staffs: [],
     };
   },
@@ -47,26 +48,23 @@ export default {
   computed: {
     staffTable() {
       return this.staffs.filter((p) => {
-          return p.name.indexOf(this.keyword) !== -1;
-      })
-    }
+        return p.name.indexOf(this.keyword) !== -1;
+      });
+    },
   },
   methods: {
     getStaffInfo() {
-      // this.req({
-      //   url: "/admin/staff", // 此处写不同业务对应的url，框架会自动与baseURL拼接
-      //   data: {},
-      //   method: "GET"
-      // }).then(
-      //   res => {
-      //     // 请求成功后的处理
-      //     console.log("res :", res);
-      //   },
-      //   err => {
-      //     // 请求失败后的处理
-      //     console.log("err :", err);
-      //   }
-      // );
+      axios({
+        url: "api/getStaffList",
+        method: "get",
+      })
+        .then((res) => {
+          // console.log(res.data.data);
+          this.staffs = res.data.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     addStaff() {
       this.showEditForm = false;
@@ -79,17 +77,78 @@ export default {
       this.showAddForm = false;
     },
     deleteStaff(p) {
-      console.log('deleteStaff', p);
+      this.$confirm("要删除这个人吗, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          axios({
+            url: "api/deleteStaffInfo",
+            method: "post",
+            data: { id: p.id },
+          })
+            .then(() => {
+              this.$message({
+                type: "success",
+                message: "已删除",
+              });
+              this.reload();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
     // 添加一个员工
     handleAddStaff(staffInfo) {
       // do something
-      console.log('handleAddStaff', staffInfo);
+      console.log("handleAddStaff", staffInfo);
+      axios({
+        url: "api/addStaffInfo",
+        method: "post",
+        data: staffInfo,
+      })
+        .then((res) => {
+          console.log("-", res.data);
+          if (res.data.code) {
+            this.$message({
+              showClose: true,
+              message: "插入成功",
+              type: "success",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // 编辑一个员工
     handleEditStaff(staffInfo) {
       // do something
-      console.log('handleEditStaff', staffInfo);
+      // console.log("handleEditStaff", staffInfo);
+      axios({
+        url: "api/editStaffInfo",
+        method: "post",
+        data: staffInfo,
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "已修改",
+          });
+          // 重新加载页面
+          // this.reload()
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
