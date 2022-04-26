@@ -72,7 +72,7 @@ export default {
           axios({
             url: "api/deleteMettingInfo",
             method: "post",
-            data: { id: p.id_meeting },
+            data: { id: p.id_meeting, title: p.title },
           }).then(() => {
               this.$message({
                 type: "success",

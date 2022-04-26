@@ -162,23 +162,23 @@ export const asyncRouterMap = [
     //         },
     //     ]
     // },
-    // {
-    //     path: '/other',
-    //     component: Layout,
-    //     redirect: '/other/index',
-    //     children: [
-    //         {
-    //             path: '/other/index',
-    //             name: 'other',
-    //             component: () => import('@/views/other'),
-    //             meta: {
-    //                 title: '其他',
-    //                 icon: 'el-icon-eleme',
-    //                 roles: ['admin']
-    //             }
-    //         }
-    //     ]
-    // },
+    {
+        path: '/other',
+        component: Layout,
+        redirect: '/other/index',
+        children: [
+            {
+                path: '/other/index',
+                name: 'other',
+                component: () => import('@/views/other'),
+                meta: {
+                    title: '其他',
+                    icon: 'el-icon-eleme',
+                    roles: ['admin', 'user']
+                }
+            }
+        ]
+    },
     {
         path: '/admin/staff',
         component: Layout,

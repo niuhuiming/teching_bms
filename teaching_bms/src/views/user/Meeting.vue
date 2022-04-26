@@ -10,10 +10,11 @@
       <el-table-column width="200" prop="date_meeting" label="会议时间"></el-table-column>
       <el-table-column width="200" prop="title" label="会议主题"></el-table-column>
       <el-table-column width="200" prop="place" label="会议地点"></el-table-column>
-      <el-table-column width="200" prop="deadline" label="最晚提交时间"></el-table-column>
-      <el-table-column fixed="right" label="操作" width="200">
+      <!-- <el-table-column width="200" prop="deadline" label="最晚提交时间"></el-table-column> -->
+      <el-table-column fixed="right" label="操作" width="250">
       <template slot-scope="scope">
-        <el-button @click="submit(scope.row)" type="text" size="small">提交</el-button>
+        <!-- <el-button @click="submit(scope.row)" type="text" size="small">提交</el-button> -->
+        <uploadFile :path="path" :category="scope.row" :userid="userid"></uploadFile>
       </template>
     </el-table-column>
     </el-table>
@@ -22,15 +23,21 @@
 
 <script>
 import axios from 'axios'
+import uploadFile  from './uploadFile.vue'
 export default {
   data() {
     return {
       keyword: "",
-      meetings: []
+      meetings: [],
+      // 设置文件上传到服务器的位置，比如服务器下有 public 目录， 你可以在这里写 ./public/
+      path:'./public/',
+      category: {},
+      userid: ''
     };
   },
   mounted() {
     this.getMyMeeting();
+    this.userid = localStorage.getItem('id')
   },
   computed: {
     meetingTable() {
@@ -56,10 +63,10 @@ export default {
         console.log(err);
       })
     },
-    submit(p) {
-      console.log(p);
-    }
-  }
+  },
+  components:{
+			uploadFile
+		},
 };
 </script>
 
