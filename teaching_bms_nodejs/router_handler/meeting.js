@@ -71,3 +71,35 @@ exports.addMettingInfo = (req, res) => {
         })
     })
 }
+
+// 用户-获取会议信息
+exports.getMyMeetingInfo = (req, res) => {
+    // console.log('getMyMeetingInfo已被请求', req.body);
+    let sqlStr = `select * from task_meeting where id_teacher = '${req.body.id}';`
+    db.query(sqlStr, (err, response) => {
+        if (err) {
+            return res.send({
+                code: 0,
+                data: err.message
+            })
+        }
+        // console.log(response);
+        // res.send({
+        //     code: 1,
+        //     data: response
+        // })
+        // select * from w_meeting where id_meeting in (5,6,7);
+        let arr = [];
+        response.forEach(p => {
+            arr.push(p.id_meeting)
+        });
+        sqlStr = `select * from w_meeting where id_meeting in (${arr.join(',')});`;
+        // console.log(sqlStr);
+        db.query(sqlStr, (err, response2) => {
+            res.send({
+                code: 1,
+                data: response2
+            })
+        })
+    })
+}

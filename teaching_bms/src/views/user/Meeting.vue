@@ -7,7 +7,7 @@
     </div>
 
     <el-table :data="meetingTable" style="width: 100%">
-      <el-table-column width="200" prop="date" label="会议时间"></el-table-column>
+      <el-table-column width="200" prop="date_meeting" label="会议时间"></el-table-column>
       <el-table-column width="200" prop="title" label="会议主题"></el-table-column>
       <el-table-column width="200" prop="place" label="会议地点"></el-table-column>
       <el-table-column width="200" prop="deadline" label="最晚提交时间"></el-table-column>
@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -29,7 +30,7 @@ export default {
     };
   },
   mounted() {
-    this.getMeetingInfo();
+    this.getMyMeeting();
   },
   computed: {
     meetingTable() {
@@ -39,21 +40,21 @@ export default {
     }
   },
   methods: {
-    getMeetingInfo() {
-      // this.req({
-      //   url: "/meeting", // 此处写不同业务对应的url，框架会自动与baseURL拼接
-      //   data: {},
-      //   method: "GET"
-      // }).then(
-      //   res => {
-      //     // 请求成功后的处理
-      //     console.log("res :", res);
-      //   },
-      //   err => {
-      //     // 请求失败后的处理
-      //     console.log("err :", err);
-      //   }
-      // );
+    getMyMeeting() {
+      axios(
+      {
+          url: 'api/getMyMeetingInfo',
+          method: 'post',
+          data: {
+            id: localStorage.getItem('id')
+          }
+      }
+      ).then((res) => {
+          // console.log(res.data.data)
+          this.meetings=res.data.data
+      }).catch((err) => {
+        console.log(err);
+      })
     },
     submit(p) {
       console.log(p);
