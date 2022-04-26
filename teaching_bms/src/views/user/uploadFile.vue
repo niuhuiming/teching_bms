@@ -51,11 +51,20 @@ export default {
       // console.log('formData', formData);
       axios
         .post("/api/submitMeeting", formData)
-        .then((r) => {
-          console.log(r);
+        .then(() => {
+          this.$message({
+              showClose: true,
+              message: "上传成功",
+              type: "success",
+            });
           // console.log("上传成功");
         })
         .catch((e) => {
+          this.$message({
+              showClose: true,
+              message: "上传失败",
+              type: "danger",
+            });
           console.log("上传失败", e.message);
         });
     },

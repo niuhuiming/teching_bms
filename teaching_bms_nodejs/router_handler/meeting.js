@@ -1,142 +1,140 @@
 const db = require('../db/index')
 const multiparty = require('multiparty');
 const fs = require('fs')
+var path=require('path');
+var { nanoid } = require("nanoid");
 
-// 管理员-获取会议信息
+// 管理员-获取会议列表
 exports.getMettingInfo = (req, res) => {
     const sqlStr = `select * from w_meeting;`
     db.query(sqlStr, (err, response) => {
         if (err) {
-            return res.send({
-                code: 0,
-                data: err.message
-            })
+            return res.send({ code: 0, data: err.message })
         }
-        res.send({
-            code: 1,
-            data: response
-        })
+        res.send({ code: 1, data: response })
     })
 }
 
-// 管理员-删除会议信息
+// 管理员-删除会议
 exports.deleteMettingInfo = (req, res) => {
+    // 删除相关会议文件夹下的所有内容
     clearDir(`./public/${req.body.title}`)
     fs.rmdir(`./public/${req.body.title}`, err => { })
+
     const sqlStr = `delete from w_meeting where id_meeting = '${req.body.id}'`
     db.query(sqlStr, (err, response) => {
         if (err) {
-            return res.send({
-                code: 0,
-                data: err.message
-            })
+            return res.send({ code: 0, data: err.message })
         }
-        res.send({
-            code: 1,
-            data: response
-        })
+        res.send({ code: 1, data: response })
     })
 }
 
-// 管理员-编辑会议信息
+// 管理员-编辑会议
 exports.editMettingInfo = (req, res) => {
     let sqlStr = `select title from w_meeting where id_meeting='${req.body.id_meeting}' `
+    // 需要将文件夹名字和表单信息保持一致
     db.query(sqlStr, (err, response) => {
         fs.renameSync(`./public/${response[0].title}`, `./public/${req.body.title}`);
         // console.log(response);
     })
+
     sqlStr = `update w_meeting set date_meeting='${req.body.date_meeting}', title='${req.body.title}', place='${req.body.place}' where id_meeting='${req.body.id_meeting}'`
-    // console.log(sqlStr);
     db.query(sqlStr, (err, response) => {
         if (err) {
-            // console.log(err.message);
-            return res.send({
-                code: 0,
-                data: err.message
-            })
+            return res.send({ code: 0, data: err.message })
         }
-        res.send({
-            code: 1,
-            data: 'succ'
-        })
+        res.send({ code: 1, data: 'success' })
     })
 }
 
-// 管理员-增加会议信息
+// 管理员-添加会议并下发任务
 exports.addMettingInfo = (req, res) => {
-    // 为用户提交新建文件夹
+    // 异步获取用户id列表
+    const teachers = () => {
+        let sql = `select id from teachers;`
+        return new Promise((resolve, reject) => {
+            db.query(sql, (err, result) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    resolve(result);
+                }
+            })
+        });
+    }
+
+    // 为会议产生id
+    const id_meeting = nanoid();
+    // 为每个用户添加任务
+    teachers(1).then(myData => {
+        // 这里的myData是上面异步的执行结果
+        // console.log(myData);
+        myData.forEach((p) => {
+            let sqlStr = `insert into task_meeting(id_teacher, id_meeting) values ('${p.id}', '${id_meeting}');`
+            db.query(sqlStr, (err, response) => {
+                if (err) {
+                    return res.send({ code: 0, data: err.message })
+                }
+            })
+        })
+    });
+
+    // 为新会议新建文件夹
     fs.mkdirSync(`./public/${req.body.title}`)
-    const sqlStr = `insert into w_meeting(date_meeting, title, place) values ('${req.body.date_meeting}', '${req.body.title}', '${req.body.place}')`
-    // console.log(sqlStr);
+    // 在会议表中保存会议信息
+    sqlStr = `insert into w_meeting(id_meeting, date_meeting, title, place) values ('${id_meeting}', '${req.body.date_meeting}', '${req.body.title}', '${req.body.place}')`
     db.query(sqlStr, (err, response) => {
         if (err) {
-            // console.log(err.message);
-            return res.send({
-                code: 0,
-                data: err.message
-            })
+            return res.send({ code: 0, data: err.message })
         }
-        res.send({
-            code: 1,
-            data: 'succ'
-        })
+        res.send({ code: 1, data: 'success' })
     })
 }
 
-// 用户-获取会议信息
+// 用户-获取会议列表-可优化
 exports.getMyMeetingInfo = (req, res) => {
-    // console.log('getMyMeetingInfo已被请求', req.body);
+    // 获取到用户未完成的任务
     let sqlStr = `select * from task_meeting where id_teacher = '${req.body.id}';`
     db.query(sqlStr, (err, response) => {
         if (err) {
-            return res.send({
-                code: 0,
-                data: err.message
-            })
+            return res.send({ code: 0, data: err.message })
         }
         let arr = [];
-        response.forEach(p => {
-            arr.push(p.id_meeting)
-        });
+        response.forEach(p => { arr.push('"' + p.id_meeting + '"')});
+
+        // 返回未完成任务的信息
         sqlStr = `select * from w_meeting where id_meeting in (${arr.join(',')});`;
-        // console.log(sqlStr);
         db.query(sqlStr, (err, response2) => {
-            res.send({
-                code: 1,
-                data: response2
-            })
+            res.send({ code: 1, data: response2 })
         })
     })
 }
 
-// 用户-提交会议信息
+// 用户-提交会议任务
 exports.submitMeeting = (req, res) => {
-    // console.log('submitMeeting被调用了');
-    //利用multiparty中间件获取文件数据
-    let uploadDir = './' //这个不用改，因为并不是保存在这个目录下，这只是作为中间目录，待会要重命名文件到指定目录的
+    //利用 multiparty 中间件获取文件数据
+    let uploadDir = './' // 这个不用改，因为并不是保存在这个目录下，这只是作为中间目录，待会要重命名文件到指定目录的
 
     let form = new multiparty.Form()
 
     form.uploadDir = uploadDir
-    form.keepExtensions = true; //是否保留后缀
+    form.keepExtensions = true; // 是否保留后缀
     form.parse(req, function (err, fields, files) { //其中fields表示你提交的表单数据对象，files表示你提交的文件对象
+        // 这里是save_path 就是前端传回来的 path 字段，这个字段会被 multiparty 中间件解析到 fields 里面 ，这里的 fields 相当于 req.body 的意思
+        let save_path = fields.path
+        
         // console.log("上传文件", fields)
         // console.log("files", files)
-        //这里是save_path 就是前端传回来的 path 字段，这个字段会被 multiparty 中间件解析到 fields 里面 ，这里的 fields 相当于 req.body 的意思
-        let save_path = fields.path
-
-        // console.log(fields);
+        // console.log("fields", fields);
         const sqlStr = `delete from task_meeting where id_teacher = '${fields.userid}' and id_meeting = '${fields.id_meeting}';`
         db.query(sqlStr, (err, res) => {
-            if (err) console.log(err);
-            // else console.log(res);
+            if (err) {
+                return res.send({ code: 0, data: err.message })
+            }
         })
 
-        let file_list = []
-        if (!files.file) res.send({
-            code: 0,
-            data: '上传失败'
-        })
+        if (!files.file) res.send({ code: 0, data: '上传失败' })
         else {
             //所有文件重命名，（因为不重名的话是随机文件名）
             files.file.forEach(file => {
@@ -144,27 +142,18 @@ exports.submitMeeting = (req, res) => {
                  * file.path 文件路径
                  * save_path+originalFilename   指定上传的路径 + 原来的名字
                  */
-                // console.log(file.path, save_path, file.originalFilename,);
-                fs.rename(file.path, save_path + file.originalFilename, function (err) {
+                console.log(file.path, save_path, file.originalFilename,);
+                fs.rename(uploadDir + file.path, save_path + fields.userid + path.extname(file.originalFilename), (err) => { 
                     if (err) {
-                        // console.log("重命名失败")
-                    } else {
-                        // console.log("重命名成功")
+                        console.log('重命名失败', err.message) 
                     }
                 });
             })
             if (err) {
-                console.log(err)
-                res.send({
-                    code: 0,
-                    data: '上传失败'
-                })
+                res.send({ code: 0, data: '上传失败' })
             } else {
                 //返回所有上传的文件信息
-                res.send({
-                    code: 1,
-                    data: '上传成功'
-                })
+                res.send({ code: 1, data: '上传成功' })
             }
         }
     })
