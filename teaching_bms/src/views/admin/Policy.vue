@@ -10,49 +10,30 @@
     </div>
 
     <el-table :data="policyTable" style="width: 100%">
-      <el-table-column width="200" prop="date" label="政策发布时间" sortable></el-table-column>
+      <el-table-column width="200" prop="date_publish" label="政策发布时间" sortable></el-table-column>
       <el-table-column width="200" prop="title" label="政策文件标题"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
       <template slot-scope="scope">
-        <el-button @click="editPolicy(scope.row)" type="text" size="small">编辑</el-button>
         <el-button @click="deletePolicy(scope.row)" type="text" size="small">删除</el-button>
       </template>
     </el-table-column>
     </el-table>
 
-    <PolicyForm title="新增政策" :visible.sync="showAddForm" @save="handleAddPolicy"/>
-    <PolicyForm title="编辑政策" :visible.sync="showEditForm" @save="handleEditPolicy" :model="editFormData"/>
+    <PolicyForm title="新增政策" path="./public/policy/" :visible.sync="showAddForm" @save="handleAddPolicy"/>
   </div>
 </template>
 
 <script>
 import PolicyForm from './PolicyForm.vue'
+import axios from 'axios'
 export default {
   components: { PolicyForm },
   data() {
     return {
-      showEditForm: false, // 是否显示编辑表单
       showAddForm: false, // 是否显示新增表单
       editFormData: {},
       keyword: "",  // 搜索时列表过滤
-      policys: [{
-          date: "2016-05-02",
-          title: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        }, {
-          date: "2016-05-04",
-          title: "王虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        }, {
-          date: "2016-05-01",
-          title: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        }, {
-          date: "2016-05-03",
-          title: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-      ],
+      policys: [],
     };
   },
   computed: {
@@ -64,29 +45,74 @@ export default {
   },
   methods: {
     addPolicy() {
-      this.showEditForm = false;
       this.showAddForm = true;
-    },
-    editPolicy(p) {
-      // 编辑时填充表单
-      this.editFormData = p;
-      this.showEditForm = true;
-      this.showAddForm = false;
     },
     deletePolicy(p) {
       console.log('deletePolicy', p);
+
+      this.$confirm("删政策吗, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+          axios({
+            url: "api/deletePolicyInfo",
+            method: "post",
+            data: { id: p.id_policy, title: p.title },
+          }).then(() => {
+              this.$message({
+                type: "success",
+                message: "已删除",
+              });
+              // this.reload();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
     // 添加一个员工
     handleAddPolicy(policyInfo) {
       // do something
-      console.log('handleAddPolicy', policyInfo);
+      axios({
+        url: "api/addPolicyInfo",
+        method: "post",
+        data: policyInfo,
+      }).then((res) => {
+          if (res.data.code) {
+            this.$message({
+              showClose: true,
+              message: "插入成功",
+              type: "success",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    // 编辑一个员工
-    handleEditPolicy(policyInfo) {
-      // do something
-      console.log('handleEditPolicy', policyInfo);
-    },
+    getPolicyList() {
+      axios(
+      {
+          url: 'api/getPolicyInfo',
+          method: 'get',
+      }
+      ).then((res) => {
+          this.policys=res.data.data
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
   },
+  mounted() {
+    this.getPolicyList();
+  }
 };
 </script>
 

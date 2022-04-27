@@ -6,7 +6,7 @@
       </el-input>
     </div>
     <el-table :data="policyTable" style="width: 100%">
-        <el-table-column label="政策发布时间" prop="date"></el-table-column>
+        <el-table-column label="政策发布时间" prop="date_publish"></el-table-column>
         <el-table-column label="政策文件标题" prop="title"></el-table-column>
         <el-table-column align="right">
         <!-- <template slot="header">
@@ -21,24 +21,12 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
       keyword: "",
-      policys: [{
-          date: "2016-05-02",
-          title: "王小虎",
-        }, {
-          date: "2016-05-04",
-          title: "王小",
-        }, {
-          date: "2016-05-01",
-          title: "王",
-        }, {
-          date: "2016-05-03",
-          title: "虎",
-        },
-      ],
+      policys: [],
     };
   },
   computed: {
@@ -51,8 +39,23 @@ export default {
   methods: {
     download(index, p) {
       console.log(index, p);
+    },
+    getPolicyList() {
+      axios(
+      {
+          url: 'api/getPolicyInfo',
+          method: 'get',
+      }
+      ).then((res) => {
+          this.policys=res.data.data
+      }).catch((err) => {
+        console.log(err);
+      })
     }
   },
+  mounted() {
+    this.getPolicyList();
+  }
 };
 </script>
 
