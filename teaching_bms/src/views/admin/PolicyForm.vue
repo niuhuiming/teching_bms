@@ -1,11 +1,11 @@
 <template>
   <el-dialog :title="title" :visible="visible" @update:visible="handleVisibleChange" width="50%" center>
-    <el-form ref="EditForm" :model="form" label-width="100px" style="width: 100%">
-      <el-form-item label="政策发布时间">
+    <el-form ref="EditForm" :model="form" label-width="80px" style="width: 100%">
+      <el-form-item label="发布时间">
         <el-date-picker v-model="form.date_publish" type="date" placeholder="选择日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="政策文件标题">
+      <el-form-item label="文件标题">
         <el-input v-model="form.title"></el-input>
       </el-form-item>
       <template>

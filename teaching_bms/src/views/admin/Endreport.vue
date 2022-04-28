@@ -21,8 +21,8 @@
     </el-table-column>
     </el-table>
 
-    <MeetingForm title="新增会议" :visible.sync="showAddForm" @save="handleAddMeeting"/>
-    <MeetingForm title="编辑会议" :visible.sync="showEditForm" @save="handleEditMeeting" :model="editFormData"/>
+    <MeetingForm title="新增年终工作报告" :visible.sync="showAddForm" @save="handleAddMeeting"/>
+    <MeetingForm title="编辑年终工作报告" :visible.sync="showEditForm" @save="handleEditMeeting" :model="editFormData"/>
   </div>
 </template>
 

@@ -65,7 +65,7 @@ export default {
       formData.append("path", this.path + this.category.title + "/");
       // 传递人员信息
       formData.append("userid", this.userid);
-      formData.append("id_meeting", this.category.id_endreport);
+      formData.append("id_meeting", this.category.id_endreport || this.category.id_meeting || this.category.id_final);
       //url 是你提交服务器的接口
       // console.log('formData', formData);
       axios

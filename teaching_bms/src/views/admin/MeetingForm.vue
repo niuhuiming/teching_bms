@@ -1,13 +1,13 @@
 <template>
   <el-dialog :title="title" :visible="visible" @update:visible="handleVisibleChange" width="50%" center>
-    <el-form ref="EditForm" :model="form" label-width="100px" style="width: 100%">
-      <el-form-item label="会议时间">
+    <el-form ref="EditForm" :model="form" label-width="80px" style="width: 100%">
+      <el-form-item label="时间">
         <el-input v-model="form.date_meeting"></el-input>
       </el-form-item>
-      <el-form-item label="会议主题">
+      <el-form-item label="主题">
         <el-input v-model="form.title"></el-input>
       </el-form-item>
-      <el-form-item label="会议地点">
+      <el-form-item label="地点">
         <el-input v-model="form.place"></el-input>
       </el-form-item>
       <!-- <el-form-item label="最晚提交时间">

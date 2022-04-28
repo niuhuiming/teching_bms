@@ -8,7 +8,7 @@
 
     <el-table :data="meetingTable" style="width: 100%">
       <el-table-column
-        width="200"
+        width="600"
         prop="date_meeting"
         label="学年"
       ></el-table-column>

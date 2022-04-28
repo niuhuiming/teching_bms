@@ -142,7 +142,6 @@ exports.submitMeeting = (req, res) => {
         let save_path = fields.path
         
         // console.log("上传文件", fields)
-        // console.log("files", files)
         // console.log("fields", fields);
         const sqlStr = `delete from task_meeting where id_teacher = '${fields.userid}' and id_meeting = '${fields.id_meeting}';`
         db.query(sqlStr, (err, res) => {
