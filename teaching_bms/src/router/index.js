@@ -259,6 +259,71 @@ export const asyncRouterMap = [
             }
         ]
     },
+    // 以下是重复性内容
+    {
+        path: '/user/final',
+        component: Layout,
+        children: [
+            {
+                path: '/user/final',
+                name: 'final',
+                component: () => import('@/views/user/Final'),
+                meta: {
+                    title: '期末教学文件提交',
+                    icon: 'el-icon-eleme',
+                    roles: ['user']
+                }
+            }
+        ]
+    },
+    {
+        path: '/admin/final',
+        component: Layout,
+        children: [
+            {
+                path: '/admin/final',
+                name: 'admin_final',
+                component: () => import('@/views/admin/Final'),
+                meta: {
+                    title: '期末教学文件管理',
+                    icon: 'el-icon-eleme',
+                    roles: ['admin']
+                }
+            }
+        ]
+    },
+    {
+        path: '/user/endreport',
+        component: Layout,
+        children: [
+            {
+                path: '/user/endreport',
+                name: 'endreport',
+                component: () => import('@/views/user/Endreport'),
+                meta: {
+                    title: '年终工作报告提交',
+                    icon: 'el-icon-eleme',
+                    roles: ['user']
+                }
+            }
+        ]
+    },
+    {
+        path: '/admin/endreport',
+        component: Layout,
+        children: [
+            {
+                path: '/admin/endreport',
+                name: 'admin_endreport',
+                component: () => import('@/views/admin/Endreport'),
+                meta: {
+                    title: '年终工作报告管理',
+                    icon: 'el-icon-eleme',
+                    roles: ['admin']
+                }
+            }
+        ]
+    },
     {
         path: '*',
         redirect: '/404',

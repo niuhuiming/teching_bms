@@ -14,7 +14,7 @@
       <el-table-column fixed="right" label="操作" width="250">
       <template slot-scope="scope">
         <!-- <el-button @click="submit(scope.row)" type="text" size="small">提交</el-button> -->
-        <uploadFile :path="path" :category="scope.row" :userid="userid"></uploadFile>
+        <uploadFile :path="path" :category="scope.row" :userid="userid" :url="url"></uploadFile>
       </template>
     </el-table-column>
     </el-table>
@@ -31,6 +31,7 @@ export default {
       meetings: [],
       // 设置文件上传到服务器的位置，比如服务器下有 public 目录， 你可以在这里写 ./public/
       path:'./public/meeting/',
+      url:'/api/submitMeeting',
       category: {},
       userid: ''
     };
