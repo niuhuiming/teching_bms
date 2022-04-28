@@ -13,7 +13,7 @@
             <el-input v-model="keyword" size="mini" placeholder="输入关键字搜索"/>
         </template> -->
         <template slot-scope="scope">
-            <el-button size="mini" @click="download(scope.$index, scope.row)">下载</el-button>
+            <el-button size="mini" @click="handleDownload(scope.row)">下载</el-button>
         </template>
         </el-table-column>
     </el-table>
@@ -37,8 +37,34 @@ export default {
     }
   },
   methods: {
-    download(index, p) {
-      console.log(index, p);
+    handleDownload(p) {
+      this.$confirm('确定下载吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        // type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '正在下载!'
+        });
+        this.download(p)
+      }).catch(() => {});
+    },
+    download(p) {
+      axios(
+      {
+          url: 'api/downloadPolicyById',
+          method: 'get',
+          params: {
+            id_policy: p.id_policy
+          }
+      }
+      ).then((res) => {
+        // console.log('-', res);
+          window.location.href=`${res.request.responseURL}`
+      }).catch((err) => {
+        console.log(err);
+      })
     },
     getPolicyList() {
       axios(

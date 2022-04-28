@@ -1,6 +1,6 @@
 <template>
   <div class="logo">
-      <router-link to="/home">后台管理</router-link>
+      <router-link to="/home">基层教学组织管理</router-link>
   </div>
 </template>
 

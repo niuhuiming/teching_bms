@@ -11,7 +11,7 @@
 
     <el-table :data="policyTable" style="width: 100%">
       <el-table-column width="200" prop="date_publish" label="政策发布时间" sortable></el-table-column>
-      <el-table-column width="200" prop="title" label="政策文件标题"></el-table-column>
+      <el-table-column width="500" prop="title" label="政策文件标题"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
       <template slot-scope="scope">
         <el-button @click="deletePolicy(scope.row)" type="text" size="small">删除</el-button>
@@ -48,9 +48,8 @@ export default {
       this.showAddForm = true;
     },
     deletePolicy(p) {
-      console.log('deletePolicy', p);
-
-      this.$confirm("删政策吗, 是否继续?", "提示", {
+      // console.log('deletePolicy', p);
+      this.$confirm("确定要删除吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -71,14 +70,15 @@ export default {
             });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
+          // this.$message({
+          //   type: "info",
+          //   message: "已取消删除",
+          // });
         });
     },
     // 添加一个员工
     handleAddPolicy(policyInfo) {
+      policyInfo.date_publish = this.DateToStr(policyInfo.date_publish)
       // do something
       axios({
         url: "api/addPolicyInfo",
@@ -88,7 +88,7 @@ export default {
           if (res.data.code) {
             this.$message({
               showClose: true,
-              message: "插入成功",
+              message: "添加完成",
               type: "success",
             });
           }
@@ -108,6 +108,15 @@ export default {
       }).catch((err) => {
         console.log(err);
       })
+    },
+    // 日期转字符串格式
+    DateToStr(date) {
+        var year = date.getFullYear();//年
+        var month = date.getMonth();//月
+        var day = date.getDate();//日
+        return year + "-" +
+            ((month + 1) > 9 ? (month + 1) : "0" + (month + 1)) + "-" +
+            (day > 9 ? day : ("0" + day));
     }
   },
   mounted() {

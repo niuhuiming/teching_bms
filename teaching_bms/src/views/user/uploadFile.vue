@@ -1,13 +1,23 @@
 <template>
-  <div>
-    <el-upload :action="'none'" :auto-upload="false" ref='upload'  :on-change="onChange" :on-remove="onRemove" multiple show-file-list>
-			<!-- <i class="el-icon-upload"></i> -->
-			<!-- <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div> -->
-      <el-button type="primary" size="medium">选择文件</el-button>
-			<!-- <div class="el-upload__tip" slot="tip">只能上传doc/docx文件</div> -->
-		</el-upload>
-		<el-button icon="el-icon-upload" type="success" @click="submitUpload" size="medium">上传</el-button>
-  </div>
+  <!-- <div> -->
+  <el-upload
+    :action="'none'"
+    :auto-upload="false"
+    ref="upload"
+    :on-change="onChange"
+    :on-remove="onRemove"
+  >
+    <el-button type="primary" size="small" slot="trigger">选择文件</el-button>
+    <el-button
+      icon="el-icon-upload"
+      style="margin-left: 10px"
+      type="success"
+      @click="submitUpload"
+      size="small"
+      >提交</el-button
+    >
+  </el-upload>
+  <!-- </div> -->
 </template>
 
 <script>
@@ -16,7 +26,7 @@ export default {
   props: {
     path: String,
     category: Object,
-    userid: String
+    userid: String,
   },
   data() {
     return {
@@ -37,35 +47,42 @@ export default {
     },
     //上传文件
     submitUpload() {
+      if (!this.fileList.length) {
+        this.$message({
+          showClose: true,
+          message: "请先选择文件",
+          type: "warning",
+        });
+        return;
+      }
       let formData = new FormData();
       // 向 formData 对象中添加文件
       this.fileList.forEach((file) => {
         formData.append("file", file);
       });
       //设置文件保存路径
-      formData.append("path", this.path + this.category.title + '/');
+      formData.append("path", this.path + this.category.title + "/");
       // 传递人员信息
-      formData.append('userid', this.userid)
-      formData.append('id_meeting', this.category.id_meeting)
+      formData.append("userid", this.userid);
+      formData.append("id_meeting", this.category.id_meeting);
       //url 是你提交服务器的接口
       // console.log('formData', formData);
       axios
         .post("/api/submitMeeting", formData)
         .then(() => {
           this.$message({
-              showClose: true,
-              message: "上传成功",
-              type: "success",
-            });
+            showClose: true,
+            message: "提交成功",
+            type: "success",
+          });
           // console.log("上传成功");
         })
         .catch((e) => {
           this.$message({
-              showClose: true,
-              message: "上传失败",
-              type: "danger",
-            });
-          console.log("上传失败", e.message);
+            showClose: true,
+            message: "提交失败",
+            type: "danger",
+          });
         });
     },
   },

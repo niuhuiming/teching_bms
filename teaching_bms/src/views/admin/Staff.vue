@@ -78,7 +78,7 @@ export default {
     },
     // 删除一个员工
     deleteStaff(p) {
-      this.$confirm("要删除这个人吗, 是否继续?", "提示", {
+      this.$confirm("确定要删除吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -99,10 +99,10 @@ export default {
             });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
+          // this.$message({
+          //   type: "info",
+          //   message: "已取消删除",
+          // });
         });
     },
     // 添加一个员工
@@ -116,7 +116,7 @@ export default {
           if (res.data.code) {
             this.$message({
               showClose: true,
-              message: "插入成功",
+              message: "添加完成",
               type: "success",
             });
           }

@@ -9,6 +9,7 @@ exports.getMettingInfo = (req, res) => {
     const sqlStr = `select * from w_meeting;`
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log('[error]', err.message);
             return res.send({ code: 0, data: err.message })
         }
         res.send({ code: 1, data: response })
@@ -18,12 +19,17 @@ exports.getMettingInfo = (req, res) => {
 // 管理员-删除会议
 exports.deleteMettingInfo = (req, res) => {
     // 删除相关会议文件夹下的所有内容
-    clearDir(`./public/${req.body.title}`)
-    fs.rmdir(`./public/${req.body.title}`, err => { })
+    try {
+        clearDir(`./public/meeting/${req.body.title}`)
+        fs.rmdir(`./public/meeting/${req.body.title}`, err => { })
+    } catch (error) {
+        console.log('[error]', error.message);
+    }
 
     const sqlStr = `delete from w_meeting where id_meeting = '${req.body.id}'`
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log('[error]', err.message);
             return res.send({ code: 0, data: err.message })
         }
         res.send({ code: 1, data: response })
@@ -35,13 +41,17 @@ exports.editMettingInfo = (req, res) => {
     let sqlStr = `select title from w_meeting where id_meeting='${req.body.id_meeting}' `
     // 需要将文件夹名字和表单信息保持一致
     db.query(sqlStr, (err, response) => {
-        fs.renameSync(`./public/${response[0].title}`, `./public/${req.body.title}`);
-        // console.log(response);
+        if (err) {
+            console.log('[error]', err.message);
+            return res.send({ code: 0, data: err.message })
+        }
+        fs.renameSync(`./public/meeting/${response[0].title}`, `./public/meeting/${req.body.title}`);
     })
 
     sqlStr = `update w_meeting set date_meeting='${req.body.date_meeting}', title='${req.body.title}', place='${req.body.place}' where id_meeting='${req.body.id_meeting}'`
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log('[error]', err.message);
             return res.send({ code: 0, data: err.message })
         }
         res.send({ code: 1, data: 'success' })
@@ -56,7 +66,7 @@ exports.addMettingInfo = (req, res) => {
         return new Promise((resolve, reject) => {
             db.query(sql, (err, result) => {
                 if (err) {
-                    console.log(err);
+                    console.log('[error]', err.message);
                 } else {
                     resolve(result);
                 }
@@ -74,6 +84,7 @@ exports.addMettingInfo = (req, res) => {
             let sqlStr = `insert into task_meeting(id_teacher, id_meeting) values ('${p.id}', '${id_meeting}');`
             db.query(sqlStr, (err, response) => {
                 if (err) {
+                    console.log('[error]', err.message);
                     return res.send({ code: 0, data: err.message })
                 }
             })
@@ -81,11 +92,13 @@ exports.addMettingInfo = (req, res) => {
     });
 
     // 为新会议新建文件夹
-    fs.mkdirSync(`./public/${req.body.title}`)
+    fs.mkdirSync(`./public/meeting/${req.body.title}`)
     // 在会议表中保存会议信息
     sqlStr = `insert into w_meeting(id_meeting, date_meeting, title, place) values ('${id_meeting}', '${req.body.date_meeting}', '${req.body.title}', '${req.body.place}')`
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log(111);
+            console.log('[error]', err.message);
             return res.send({ code: 0, data: err.message })
         }
         res.send({ code: 1, data: 'success' })
@@ -98,6 +111,7 @@ exports.getMyMeetingInfo = (req, res) => {
     let sqlStr = `select * from task_meeting where id_teacher = '${req.body.id}';`
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log('[error]', err.message);
             return res.send({ code: 0, data: err.message })
         }
         let arr = [];
@@ -106,6 +120,9 @@ exports.getMyMeetingInfo = (req, res) => {
         // 返回未完成任务的信息
         sqlStr = `select * from w_meeting where id_meeting in (${arr.join(',')});`;
         db.query(sqlStr, (err, response2) => {
+            if (err) {
+                console.log('[error]', err.message);
+            }
             res.send({ code: 1, data: response2 })
         })
     })
@@ -130,6 +147,7 @@ exports.submitMeeting = (req, res) => {
         const sqlStr = `delete from task_meeting where id_teacher = '${fields.userid}' and id_meeting = '${fields.id_meeting}';`
         db.query(sqlStr, (err, res) => {
             if (err) {
+                console.log('[error]', err.message);
                 return res.send({ code: 0, data: err.message })
             }
         })
@@ -142,14 +160,15 @@ exports.submitMeeting = (req, res) => {
                  * file.path 文件路径
                  * save_path+originalFilename   指定上传的路径 + 原来的名字
                  */
-                console.log(file.path, save_path, file.originalFilename,);
+                // console.log(file.path, save_path, file.originalFilename,);
                 fs.rename(uploadDir + file.path, save_path + fields.userid + path.extname(file.originalFilename), (err) => { 
                     if (err) {
-                        console.log('重命名失败', err.message) 
+                        console.log('[error]', err.message);
                     }
                 });
             })
             if (err) {
+                console.log('[error]', err.message);
                 res.send({ code: 0, data: '上传失败' })
             } else {
                 //返回所有上传的文件信息
@@ -173,7 +192,7 @@ function emptyDir(path) {
             emptyDir(filePath);
         } else {
             fs.unlinkSync(filePath);
-            console.log(`删除${file}文件成功`);
+            console.log('[delete]', file);
         }
     });
 }

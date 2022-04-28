@@ -30,7 +30,7 @@ export default {
       keyword: "",
       meetings: [],
       // 设置文件上传到服务器的位置，比如服务器下有 public 目录， 你可以在这里写 ./public/
-      path:'./public/',
+      path:'./public/meeting/',
       category: {},
       userid: ''
     };
@@ -57,8 +57,9 @@ export default {
           }
       }
       ).then((res) => {
-          // console.log(res.data.data)
-          this.meetings=res.data.data
+          if (res.data.data) {
+            this.meetings = res.data.data;
+          }
       }).catch((err) => {
         console.log(err);
       })

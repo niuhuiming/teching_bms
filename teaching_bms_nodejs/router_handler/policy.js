@@ -9,6 +9,7 @@ exports.getPolicyInfo = (req, res) => {
     const sqlStr = `select * from r_policy;`
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log('error', err.message);
             return res.send({ code: 0, data: err.message })
         }
         res.send({ code: 1, data: response })
@@ -18,9 +19,10 @@ exports.getPolicyInfo = (req, res) => {
 // 新增政策信息
 exports.addPolicyInfo = (req, res) => {
     const ID = nanoid();
-    const sqlStr = `insert into r_policy(id_policy, date_publish, title) values ('${ID}', '${req.body.date_publish}', '${req.body.title}');`
+    const sqlStr = `insert into r_policy(id_policy, date_publish, title) values ('${ID}', '${req.body.date_publish.slice(0,10)}', '${req.body.title}');`
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log('error', err.message);
             return res.send({ code: 0, data: err.message })
         }
         res.send({ code: 1, data: 'success' })
@@ -55,7 +57,7 @@ exports.addPolicyFile = (req, res) => {
                 // console.log(file.path, save_path, file.originalFilename,);
                 fs.rename(uploadDir + file.path, save_path + fields.policy_title + path.extname(file.originalFilename), (err) => { 
                     if (err) {
-                        console.log('重命名失败', err.message) 
+                        console.log('[error]', err.message);
                     }
                 });
             })
@@ -73,15 +75,48 @@ exports.addPolicyFile = (req, res) => {
 exports.deletePolicyInfo = (req, res) => {
     // 删除相关政策
     fs.unlink(`./public/policy/${req.body.title}.doc`, err => { 
-        if (err) console.log(err.message);
+        if (err) {
+            console.log('[error]', err.message);
+        }
+        console.log('[delete]', req.body.title);
     })
 
     const sqlStr = `delete from r_policy where id_policy = '${req.body.id}'`
     // console.log(sqlStr);
     db.query(sqlStr, (err, response) => {
         if (err) {
+            console.log('[error]', err.message);
             return res.send({ code: 0, data: err.message })
         }
         res.send({ code: 1, data: response })
+    })
+}
+
+// 下载政策
+exports.downloadPolicyById = (req, res) => {
+    // console.log('req.query', req.query);
+    // // 删除相关政策
+    const sqlStr = `select title from r_policy where id_policy = '${req.query.id_policy}'`
+    db.query(sqlStr, (err, response) => {
+        if (err) {
+            console.log('[error]', err.message);
+            return res.send({ code: 0, data: err.message })
+        }
+        // console.log(response[0].title, path.resolve(__dirname, `../public/policy/${response[0].title}.doc`));
+        // 读取PDF文件
+        fs.readFile(path.resolve(__dirname, `../public/policy/${response[0].title}.doc`), (err, data) => {
+            if (err) {
+                console.log('[error]', err.message);
+                return res.send({ code: 0, data: err.message })
+            }
+            res.setHeader('Content-Type', 'application/msword')
+            // 设置文件名
+            const fileName = encodeURI(`${response[0].title}`)
+            // Content-disposition 是 MIME 协议的扩展，MIME 协议指示 MIME 用户代理如何显示附加的文件
+            // attachment 以附件形式下载
+            res.setHeader('Content-Disposition', `attachment; filename=${fileName}.doc`)
+            // 返回数据
+            res.end(data)
+        })
     })
 }

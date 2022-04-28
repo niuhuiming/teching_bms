@@ -162,23 +162,23 @@ export const asyncRouterMap = [
     //         },
     //     ]
     // },
-    {
-        path: '/other',
-        component: Layout,
-        redirect: '/other/index',
-        children: [
-            {
-                path: '/other/index',
-                name: 'other',
-                component: () => import('@/views/other'),
-                meta: {
-                    title: '其他',
-                    icon: 'el-icon-eleme',
-                    roles: ['admin', 'user']
-                }
-            }
-        ]
-    },
+    // {
+    //     path: '/other',
+    //     component: Layout,
+    //     redirect: '/other/index',
+    //     children: [
+    //         {
+    //             path: '/other/index',
+    //             name: 'other',
+    //             component: () => import('@/views/other'),
+    //             meta: {
+    //                 title: '其他',
+    //                 icon: 'el-icon-eleme',
+    //                 roles: ['admin', 'user']
+    //             }
+    //         }
+    //     ]
+    // },
     {
         path: '/admin/staff',
         component: Layout,
@@ -188,7 +188,7 @@ export const asyncRouterMap = [
                 name: 'admin_staff',
                 component: () => import('@/views/admin/Staff'),
                 meta: {
-                    title: '管理员-人员管理',
+                    title: '人员管理',
                     icon: 'el-icon-eleme',
                     roles: ['admin']
                 }
@@ -204,7 +204,7 @@ export const asyncRouterMap = [
                 name: 'admin_policy',
                 component: () => import('@/views/admin/Policy'),
                 meta: {
-                    title: '管理员-政策',
+                    title: '政策文件管理',
                     icon: 'el-icon-eleme',
                     roles: ['admin']
                 }
@@ -220,7 +220,7 @@ export const asyncRouterMap = [
                 name: 'admin_meeting',
                 component: () => import('@/views/admin/Meeting'),
                 meta: {
-                    title: '管理员-会议',
+                    title: '会议管理',
                     icon: 'el-icon-eleme',
                     roles: ['admin']
                 }
@@ -236,7 +236,7 @@ export const asyncRouterMap = [
                 name: 'meeting',
                 component: () => import('@/views/user/Meeting'),
                 meta: {
-                    title: '用户-会议',
+                    title: '会议资料提交',
                     icon: 'el-icon-eleme',
                     roles: ['user']
                 }
@@ -252,7 +252,7 @@ export const asyncRouterMap = [
                 name: 'policy',
                 component: () => import('@/views/user/Policy'),
                 meta: {
-                    title: '用户-政策',
+                    title: '查看政策',
                     icon: 'el-icon-eleme',
                     roles: ['user']
                 }

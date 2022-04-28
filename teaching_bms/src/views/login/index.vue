@@ -44,7 +44,7 @@ export default {
               path: '/home'
             // 解决控制台报错
             }).catch(err => {err})
-            // 将用户id存在缓存里
+            // 将用户id缓存
             localStorage.setItem('id', this.formdata.username)
           })
         }

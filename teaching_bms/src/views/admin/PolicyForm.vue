@@ -1,8 +1,9 @@
 <template>
   <el-dialog :title="title" :visible="visible" @update:visible="handleVisibleChange" width="50%" center>
-    <el-form ref="EditForm" :model="form" label-width="60px" style="width: 100%">
+    <el-form ref="EditForm" :model="form" label-width="100px" style="width: 100%">
       <el-form-item label="政策发布时间">
-        <el-input v-model="form.date_publish"></el-input>
+        <el-date-picker v-model="form.date_publish" type="date" placeholder="选择日期">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="政策文件标题">
         <el-input v-model="form.title"></el-input>
@@ -36,12 +37,39 @@ export default {
   },
   data() {
     return {
+      // 表单数据
       form: {
-        date: "",
+        date_publish: "",
         title: ""
       },
       //文件列表
       fileList: [],
+      // 日期组件
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date());
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() - 3600 * 1000 * 24);
+            picker.$emit('pick', date);
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', date);
+          }
+        }]
+      },
     };
   },
   methods: {
