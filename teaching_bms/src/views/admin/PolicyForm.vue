@@ -33,7 +33,8 @@ export default {
     },
     // 弹窗的title
     title: String,
-    path: String
+    path: String,
+    url: String
   },
   data() {
     return {
@@ -96,7 +97,7 @@ export default {
       formData.append('policy_title', this.form.title)
       //url 是你提交服务器的接口
       axios
-        .post("/api/addPolicyFile", formData)
+        .post(this.url, formData)
         .then(() => {
           console.log("上传成功");
         })

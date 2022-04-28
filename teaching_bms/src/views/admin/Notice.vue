@@ -10,8 +10,8 @@
     </div>
 
     <el-table :data="policyTable" style="width: 100%">
-      <el-table-column width="200" prop="date_publish" label="政策发布时间" sortable></el-table-column>
-      <el-table-column width="500" prop="title" label="政策文件标题"></el-table-column>
+      <el-table-column width="200" prop="date_publish" label="发布时间" sortable></el-table-column>
+      <el-table-column width="500" prop="title" label="文件标题"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
       <template slot-scope="scope">
         <el-button @click="deletePolicy(scope.row)" type="text" size="small">删除</el-button>
@@ -19,7 +19,7 @@
     </el-table-column>
     </el-table>
 
-    <PolicyForm title="新增政策" path="./public/policy/" url="/api/addPolicyFile" :visible.sync="showAddForm" @save="handleAddPolicy"/>
+    <PolicyForm title="新增" path="./public/notice/" url="/api/addNoticeFile" :visible.sync="showAddForm" @save="handleAddPolicy"/>
   </div>
 </template>
 
@@ -55,9 +55,9 @@ export default {
         type: "warning",
       }).then(() => {
           axios({
-            url: "api/deletePolicyInfo",
+            url: "api/deleteNoticeInfo",
             method: "post",
-            data: { id: p.id_policy, title: p.title },
+            data: { id: p.id_notice, title: p.title },
           }).then(() => {
               this.$message({
                 type: "success",
@@ -81,7 +81,7 @@ export default {
       policyInfo.date_publish = this.DateToStr(policyInfo.date_publish)
       // do something
       axios({
-        url: "api/addPolicyInfo",
+        url: "api/addNoticeInfo",
         method: "post",
         data: policyInfo,
       }).then((res) => {
@@ -100,7 +100,7 @@ export default {
     getPolicyList() {
       axios(
       {
-          url: 'api/getPolicyInfo',
+          url: 'api/getNoticeInfo',
           method: 'get',
       }
       ).then((res) => {

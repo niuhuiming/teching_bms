@@ -18,6 +18,10 @@ const finalRouter = require('./router/final')
 app.use('/api', finalRouter)
 const endReportRouter = require('./router/endreport')
 app.use('/api', endReportRouter)
+const noticeRouter = require('./router/notice')
+app.use('/api', noticeRouter)
+const checkRouter = require('./router/check')
+app.use('/api', checkRouter)
 
 app.listen(3000, () => {
   console.log('服务启动在3000端口')

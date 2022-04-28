@@ -325,6 +325,70 @@ export const asyncRouterMap = [
         ]
     },
     {
+        path: '/admin/notice',
+        component: Layout,
+        children: [
+            {
+                path: '/admin/notice',
+                name: 'admin_notice',
+                component: () => import('@/views/admin/Notice'),
+                meta: {
+                    title: '通知公告管理',
+                    icon: 'el-icon-eleme',
+                    roles: ['admin']
+                }
+            }
+        ]
+    },
+    {
+        path: '/user/notice',
+        component: Layout,
+        children: [
+            {
+                path: '/user/notice',
+                name: 'notice',
+                component: () => import('@/views/user/Notice'),
+                meta: {
+                    title: '通知公告',
+                    icon: 'el-icon-eleme',
+                    roles: ['user']
+                }
+            }
+        ]
+    },
+    {
+        path: '/admin/check',
+        component: Layout,
+        children: [
+            {
+                path: '/admin/check',
+                name: 'admin_check',
+                component: () => import('@/views/admin/Check'),
+                meta: {
+                    title: '教学检查管理',
+                    icon: 'el-icon-eleme',
+                    roles: ['admin']
+                }
+            }
+        ]
+    },
+    {
+        path: '/user/check',
+        component: Layout,
+        children: [
+            {
+                path: '/user/check',
+                name: 'check',
+                component: () => import('@/views/user/Check'),
+                meta: {
+                    title: '教学检查',
+                    icon: 'el-icon-eleme',
+                    roles: ['user']
+                }
+            }
+        ]
+    },
+    {
         path: '*',
         redirect: '/404',
         hidden: true
